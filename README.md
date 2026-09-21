@@ -68,3 +68,8 @@ Nesta etapa continuam proibidos: Google Sheets, Google Cloud, OAuth, sincroniza�
 ## Etapa 2 — Correção para Codemagic
 
 Foi incluída a plataforma Android (`android/`) e o `codemagic.yaml` para permitir a geração do APK de validação no Codemagic. Não há integração com Google Sheets, OAuth, sincronização ou dados reais nesta etapa.
+
+
+## Etapa 2 — Compatibilidade Android/Flutter atual
+
+Atualizado o Kotlin Gradle Plugin para 2.2.20, conforme requisito do Flutter usado no CI.
