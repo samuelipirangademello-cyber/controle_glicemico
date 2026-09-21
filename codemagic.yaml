@@ -1,0 +1,27 @@
+workflows:
+  android-debug:
+    name: Controle Glicêmico - Android APK
+    max_build_duration: 60
+
+    environment:
+      flutter: stable
+
+    scripts:
+      - name: Configurar Android local.properties
+        script: |
+          echo "flutter.sdk=$HOME/programs/flutter" > "$CM_BUILD_DIR/android/local.properties"
+
+      - name: Instalar dependências Flutter
+        script: |
+          flutter pub get
+
+      - name: Verificar projeto Flutter
+        script: |
+          flutter analyze
+
+      - name: Gerar APK Android
+        script: |
+          flutter build apk --debug
+
+    artifacts:
+      - build/app/outputs/flutter-apk/*.apk
