@@ -1,0 +1,2 @@
+# Codemagic creates android/local.properties during the CI build.
+# For local development, Flutter/Android Studio will populate this file.

@@ -64,3 +64,7 @@ A interface foi adaptada para Flutter usando o protótipo HTML aprovado como ref
 Mantidos: identidade bordô/vermelha, fundo claro, cabeçalho, última medição, botão de registro, resumo, gráfico, relatórios, medições recentes e navegação inferior.
 
 Nesta etapa continuam proibidos: Google Sheets, Google Cloud, OAuth, sincronização e alterações na planilha real. Os dados permanecem fictícios/em memória.
+
+## Etapa 2 — Correção para Codemagic
+
+Foi incluída a plataforma Android (`android/`) e o `codemagic.yaml` para permitir a geração do APK de validação no Codemagic. Não há integração com Google Sheets, OAuth, sincronização ou dados reais nesta etapa.
