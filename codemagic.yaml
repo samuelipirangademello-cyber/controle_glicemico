@@ -26,6 +26,13 @@ workflows:
         script: |
           flutter analyze
 
+      - name: Verificar recursos Android
+        script: |
+          if grep -R "<adaptive-icon" -n android/app/src/main/res 2>/dev/null; then
+            echo "Erro: adaptive-icon encontrado em recursos incompatíveis com minSdk atual."
+            exit 1
+          fi
+
       - name: Gerar APK Android
         script: |
           flutter build apk --debug
