@@ -18,7 +18,7 @@ class RecentMeasurementsCard extends StatelessWidget {
         const SizedBox(height: 12),
         SingleChildScrollView(scrollDirection: Axis.horizontal, child: DataTable(
           columnSpacing: 18,
-          headingRowColor: MaterialStateProperty.all(AppColors.surfaceSoft),
+          headingRowColor: WidgetStateProperty.all(AppColors.surfaceSoft),
           columns: const [DataColumn(label: Text('Hora')), DataColumn(label: Text('Glicemia')), DataColumn(label: Text('Turno')), DataColumn(label: Text('Status'))],
           rows: recent.map((r) => DataRow(cells: [
             DataCell(Text(r.timeLabel)), DataCell(Text('${r.glycemia}', style: const TextStyle(fontWeight: FontWeight.w800, color: AppColors.brandDeep))), DataCell(Text(r.shift)), DataCell(Text(r.status, style: TextStyle(fontWeight: FontWeight.w700, color: _statusColor(r.status)))),
