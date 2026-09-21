@@ -5,6 +5,7 @@ workflows:
 
     environment:
       flutter: stable
+      java: 17
 
     scripts:
       - name: Preparar Android local.properties
@@ -15,6 +16,11 @@ workflows:
       - name: Instalar dependências Flutter
         script: |
           flutter pub get
+
+      - name: Verificar ambiente Android
+        script: |
+          java -version
+          flutter --version
 
       - name: Verificar projeto Flutter
         script: |
