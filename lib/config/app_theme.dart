@@ -1,28 +1,26 @@
 import 'package:flutter/material.dart';
 
 class AppColors {
-  static const bg = Color(0xFFFDF8F7);
-  static const headerBg = Color(0xFFF8E4E5);
+  static const bg = Color(0xFFFCFAFA);
+  static const headerBg = Color(0xFFFFF4F5);
   static const surface = Color(0xFFFFFFFF);
-  static const surfaceTint = Color(0xFFFCF1F1);
-  static const surfaceSoft = Color(0xFFF9ECEC);
-  static const ink = Color(0xFF3A1F24);
-  static const muted = Color(0xFF856A6F);
-  static const line = Color(0xFFF0E2E2);
-  static const brand = Color(0xFFA02F3B);
-  static const brandDeep = Color(0xFF7A1522);
-  static const brandSoft = Color(0xFFF8E4E5);
-  static const accent = Color(0xFFC94B5B);
+  static const ink = Color(0xFF251A1D);
+  static const muted = Color(0xFF76686C);
+  static const line = Color(0xFFEDE3E5);
+  static const brand = Color(0xFF941D34);
+  static const brandDeep = Color(0xFF741326);
+  static const brandSoft = Color(0xFFF8E1E5);
+  static const accent = Color(0xFFC94D62);
   static const onBrand = Colors.white;
 
-  static const okBg = Color(0xFFD6F0DE);
-  static const okFg = Color(0xFF17643A);
-  static const warnBg = Color(0xFFFFEBB8);
-  static const warnFg = Color(0xFF6E4A00);
-  static const highBg = Color(0xFFFAC9CE);
-  static const highFg = Color(0xFF9B1C2A);
-  static const lowBg = Color(0xFFFFDDBF);
-  static const lowFg = Color(0xFF85410A);
+  static const okBg = Color(0xFFDDF3E5);
+  static const okFg = Color(0xFF16713D);
+  static const warnBg = Color(0xFFFFF0CF);
+  static const warnFg = Color(0xFF8A5A00);
+  static const highBg = Color(0xFFF9DADD);
+  static const highFg = Color(0xFFAE1F35);
+  static const lowBg = Color(0xFFFFE5CE);
+  static const lowFg = Color(0xFF8B4A0A);
 }
 
 ThemeData appTheme() {
@@ -38,7 +36,6 @@ ThemeData appTheme() {
       surface: AppColors.surface,
     ),
     fontFamily: 'sans-serif',
-    splashFactory: InkSparkle.splashFactory,
     visualDensity: VisualDensity.standard,
   );
 }

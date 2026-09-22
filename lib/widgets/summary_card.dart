@@ -4,47 +4,107 @@ import '../models/glycemia_record.dart';
 
 class SummaryCard extends StatelessWidget {
   final List<GlycemiaRecord> records;
+
   const SummaryCard({super.key, required this.records});
 
   @override
   Widget build(BuildContext context) {
     final values = records.map((r) => r.glycemia).toList();
-    final avg = values.isEmpty ? null : values.reduce((a, b) => a + b) / values.length;
-    final min = values.isEmpty ? null : values.reduce((a, b) => a < b ? a : b);
-    final max = values.isEmpty ? null : values.reduce((a, b) => a > b ? a : b);
-    return _Card(
-      title: 'Resumo do período',
-      icon: Icons.bar_chart,
-      child: Column(children: [
-        _row('Total de medições', '${values.length}'),
-        _row('Média glicêmica', avg == null ? '—' : '${avg.round()} mg/dL'),
-        _row('Menor valor', min == null ? '—' : '$min mg/dL'),
-        _row('Maior valor', max == null ? '—' : '$max mg/dL'),
-      ]),
+    final avg =
+        values.isEmpty ? null : values.reduce((a, b) => a + b) / values.length;
+    final min =
+        values.isEmpty ? null : values.reduce((a, b) => a < b ? a : b);
+    final max =
+        values.isEmpty ? null : values.reduce((a, b) => a > b ? a : b);
+
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.fromLTRB(16, 15, 16, 16),
+      decoration: BoxDecoration(
+        color: AppColors.surface,
+        borderRadius: BorderRadius.circular(22),
+        border: Border.all(color: AppColors.line),
+      ),
+      child: Column(
+        children: [
+          Row(
+            children: [
+              const Text(
+                'Resumo',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w800,
+                  color: AppColors.ink,
+                ),
+              ),
+              const Spacer(),
+              Text(
+                'Últimos 7 dias',
+                style: const TextStyle(
+                  fontSize: 13,
+                  color: AppColors.muted,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 15),
+          Row(
+            children: [
+              _metric('Média', avg == null ? '—' : '${avg.round()}'),
+              _divider(),
+              _metric('Mínima', min == null ? '—' : '$min'),
+              _divider(),
+              _metric('Máxima', max == null ? '—' : '$max'),
+              _divider(),
+              _metric('Medições', '${values.length}', unit: 'registros'),
+            ],
+          ),
+        ],
+      ),
     );
   }
 
-  Widget _row(String label, String value) => Padding(
-    padding: const EdgeInsets.symmetric(vertical: 10),
-    child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-      Text(label, style: const TextStyle(fontSize: 15.5, color: AppColors.ink)),
-      Text(value, style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w800, color: AppColors.brandDeep)),
-    ]),
-  );
-}
+  Widget _metric(String label, String value, {String unit = 'mg/dL'}) {
+    return Expanded(
+      child: Column(
+        children: [
+          Text(
+            label,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: const TextStyle(
+              fontSize: 11.5,
+              color: AppColors.muted,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            value,
+            style: const TextStyle(
+              fontSize: 22,
+              fontWeight: FontWeight.w800,
+              color: AppColors.brandDeep,
+            ),
+          ),
+          Text(
+            unit,
+            style: const TextStyle(
+              fontSize: 9.5,
+              color: AppColors.muted,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 
-class _Card extends StatelessWidget {
-  final String title; final IconData icon; final Widget child;
-  const _Card({required this.title, required this.icon, required this.child});
-  @override
-  Widget build(BuildContext context) => Container(
-    width: double.infinity,
-    padding: const EdgeInsets.fromLTRB(18, 16, 18, 18),
-    decoration: BoxDecoration(color: AppColors.surface, border: Border.all(color: AppColors.line), borderRadius: BorderRadius.circular(22)),
-    child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      Row(children: [Icon(icon, color: AppColors.brand, size: 22), const SizedBox(width: 10), Text(title, style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w700, color: AppColors.brandDeep))]),
-      const SizedBox(height: 6),
-      child,
-    ]),
-  );
+  Widget _divider() {
+    return Container(
+      width: 1,
+      height: 48,
+      margin: const EdgeInsets.symmetric(horizontal: 5),
+      color: AppColors.line,
+    );
+  }
 }

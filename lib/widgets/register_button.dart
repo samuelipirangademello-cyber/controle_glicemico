@@ -3,41 +3,39 @@ import '../config/app_theme.dart';
 
 class RegisterButton extends StatelessWidget {
   final VoidCallback onPressed;
+
   const RegisterButton({super.key, required this.onPressed});
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
+      height: 56,
       width: double.infinity,
-      height: 58,
       child: Material(
         color: AppColors.brand,
-        borderRadius: BorderRadius.circular(16),
-        elevation: 0,
+        borderRadius: BorderRadius.circular(18),
         child: InkWell(
           onTap: onPressed,
-          borderRadius: BorderRadius.circular(16),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 18),
-            child: Row(
-              children: const [
-                SizedBox(width: 24, child: Icon(Icons.add, size: 24, color: AppColors.onBrand)),
-                Expanded(
-                  child: Center(
-                    child: Text(
-                      'REGISTRAR GLICEMIA',
-                      style: TextStyle(
-                        fontSize: 17,
-                        fontWeight: FontWeight.w700,
-                        letterSpacing: .7,
-                        color: AppColors.onBrand,
-                      ),
-                    ),
-                  ),
+          borderRadius: BorderRadius.circular(18),
+          child: const Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                Icons.add_rounded,
+                color: Colors.white,
+                size: 29,
+              ),
+              SizedBox(width: 9),
+              Text(
+                'REGISTRAR GLICEMIA',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w800,
+                  letterSpacing: .3,
                 ),
-                SizedBox(width: 24, child: Icon(Icons.chevron_right, size: 24, color: AppColors.onBrand)),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),

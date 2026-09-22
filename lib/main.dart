@@ -4,30 +4,6 @@ import 'repository/in_memory_glycemia_repository.dart';
 import 'screens/home_screen.dart';
 
 void main() {
-  // DIAGNÓSTICO (build 10): em vez do bloco colorido padrão do Flutter em
-  // modo release quando um widget falha ao construir/desenhar, mostra o
-  // texto real do erro na tela. Isso é só para investigação; será removido
-  // assim que a causa for identificada e corrigida.
-  ErrorWidget.builder = (FlutterErrorDetails details) {
-    return Container(
-      color: Colors.white,
-      padding: const EdgeInsets.all(16),
-      alignment: Alignment.topLeft,
-      child: SingleChildScrollView(
-        child: Text(
-          'ERRO DE INTERFACE (envie esta tela ao Claude):\n\n'
-          '${details.exceptionAsString()}\n\n'
-          '${details.stack}',
-          style: const TextStyle(color: Colors.red, fontSize: 11, fontFamily: 'monospace'),
-        ),
-      ),
-    );
-  };
-  // Captura também erros que aconteçam fora da construção de widgets
-  // (ex.: em callbacks assíncronos), para não sumirem silenciosamente.
-  FlutterError.onError = (FlutterErrorDetails details) {
-    FlutterError.presentError(details);
-  };
   runApp(const GlycemiaApp());
 }
 
@@ -62,12 +38,12 @@ class _AppShellState extends State<AppShell> {
       HomeScreen(repository: repository),
       const _PlaceholderScreen(
         title: 'Histórico',
-        icon: Icons.list_alt_outlined,
+        icon: Icons.receipt_long_outlined,
         message: 'O histórico completo será desenvolvido na próxima etapa.',
       ),
       const _PlaceholderScreen(
         title: 'Relatórios',
-        icon: Icons.description_outlined,
+        icon: Icons.insert_chart_outlined_rounded,
         message: 'Os relatórios serão desenvolvidos nas próximas etapas.',
       ),
       const _PlaceholderScreen(
@@ -79,7 +55,7 @@ class _AppShellState extends State<AppShell> {
 
     return Scaffold(
       body: IndexedStack(index: index, children: screens),
-      bottomNavigationBar: _BottomNav(
+      bottomNavigationBar: _BottomNavigation(
         currentIndex: index,
         onSelected: (value) => setState(() => index = value),
       ),
@@ -87,37 +63,58 @@ class _AppShellState extends State<AppShell> {
   }
 }
 
-class _BottomNav extends StatelessWidget {
+/// Navegação inferior deliberadamente simples:
+/// - altura fixa
+/// - sem Container vertical para o item selecionado
+/// - nenhum fundo que possa se esticar
+/// - somente ícone, texto e pequeno indicador inferior
+class _BottomNavigation extends StatelessWidget {
   final int currentIndex;
   final ValueChanged<int> onSelected;
 
-  const _BottomNav({required this.currentIndex, required this.onSelected});
+  const _BottomNavigation({
+    required this.currentIndex,
+    required this.onSelected,
+  });
+
+  static const _items = [
+    (Icons.home_outlined, Icons.home_rounded, 'Início'),
+    (Icons.receipt_long_outlined, Icons.receipt_long_rounded, 'Histórico'),
+    (
+      Icons.insert_chart_outlined_rounded,
+      Icons.insert_chart_rounded,
+      'Relatórios',
+    ),
+    (Icons.settings_outlined, Icons.settings_rounded, 'Configurações'),
+  ];
 
   @override
   Widget build(BuildContext context) {
-    const items = [
-      (Icons.home_outlined, Icons.home, 'Início'),
-      (Icons.list_alt_outlined, Icons.list_alt, 'Histórico'),
-      (Icons.bar_chart_outlined, Icons.bar_chart, 'Relatórios'),
-      (Icons.settings_outlined, Icons.settings, 'Configurações'),
-    ];
-
-    return SafeArea(
-      top: false,
-      child: Container(
-        decoration: const BoxDecoration(
-          color: AppColors.surface,
-          border: Border(top: BorderSide(color: AppColors.line)),
-        ),
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(10, 8, 10, 10),
+    return Material(
+      color: AppColors.surface,
+      elevation: 0,
+      child: SafeArea(
+        top: false,
+        child: Container(
+          height: 76,
+          decoration: const BoxDecoration(
+            color: AppColors.surface,
+            border: Border(
+              top: BorderSide(
+                color: AppColors.line,
+                width: 1,
+              ),
+            ),
+          ),
+          padding: const EdgeInsets.fromLTRB(8, 5, 8, 4),
           child: Row(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              for (var i = 0; i < items.length; i++)
+              for (var i = 0; i < _items.length; i++)
                 Expanded(
-                  child: _NavItem(
-                    icon: currentIndex == i ? items[i].$2 : items[i].$1,
-                    label: items[i].$3,
+                  child: _BottomNavigationItem(
+                    icon: currentIndex == i ? _items[i].$2 : _items[i].$1,
+                    label: _items[i].$3,
                     selected: currentIndex == i,
                     onTap: () => onSelected(i),
                   ),
@@ -130,13 +127,13 @@ class _BottomNav extends StatelessWidget {
   }
 }
 
-class _NavItem extends StatelessWidget {
+class _BottomNavigationItem extends StatelessWidget {
   final IconData icon;
   final String label;
   final bool selected;
   final VoidCallback onTap;
 
-  const _NavItem({
+  const _BottomNavigationItem({
     required this.icon,
     required this.label,
     required this.selected,
@@ -145,45 +142,41 @@ class _NavItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Semantics(
-      button: true,
-      selected: selected,
-      label: label,
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          borderRadius: BorderRadius.circular(16),
-          onTap: onTap,
-          child: AnimatedContainer(
-            duration: const Duration(milliseconds: 140),
-            constraints: const BoxConstraints(minHeight: 58),
-            padding: const EdgeInsets.symmetric(vertical: 7),
-            decoration: BoxDecoration(
-              color: selected ? AppColors.brandSoft : Colors.transparent,
-              borderRadius: BorderRadius.circular(16),
-            ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(
-                  icon,
-                  size: 23,
-                  color: selected ? AppColors.brandDeep : AppColors.muted,
-                ),
-                const SizedBox(height: 3),
-                Text(
-                  label,
-                  style: TextStyle(
-                    fontSize: 12,
-                    height: 1,
-                    fontWeight: selected ? FontWeight.w700 : FontWeight.w600,
-                    color: selected ? AppColors.brandDeep : AppColors.muted,
-                  ),
-                ),
-              ],
+    return InkWell(
+      onTap: onTap,
+      splashColor: AppColors.brandSoft,
+      highlightColor: AppColors.brandSoft.withValues(alpha: .35),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            icon,
+            size: 24,
+            color: selected ? AppColors.brand : AppColors.muted,
+          ),
+          const SizedBox(height: 3),
+          Text(
+            label,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: TextStyle(
+              fontSize: 11.5,
+              height: 1.1,
+              fontWeight: selected ? FontWeight.w800 : FontWeight.w600,
+              color: selected ? AppColors.brand : AppColors.muted,
             ),
           ),
-        ),
+          const SizedBox(height: 4),
+          AnimatedContainer(
+            duration: const Duration(milliseconds: 150),
+            width: selected ? 20 : 0,
+            height: 2.5,
+            decoration: BoxDecoration(
+              color: AppColors.brand,
+              borderRadius: BorderRadius.circular(99),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -210,13 +203,17 @@ class _PlaceholderScreen extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               Container(
-                width: 64,
-                height: 64,
+                width: 68,
+                height: 68,
                 decoration: BoxDecoration(
                   color: AppColors.brandSoft,
-                  borderRadius: BorderRadius.circular(20),
+                  borderRadius: BorderRadius.circular(22),
                 ),
-                child: Icon(icon, size: 30, color: AppColors.brandDeep),
+                child: Icon(
+                  icon,
+                  size: 31,
+                  color: AppColors.brandDeep,
+                ),
               ),
               const SizedBox(height: 18),
               Text(
@@ -231,7 +228,11 @@ class _PlaceholderScreen extends StatelessWidget {
               Text(
                 message,
                 textAlign: TextAlign.center,
-                style: const TextStyle(fontSize: 15, color: AppColors.muted),
+                style: const TextStyle(
+                  fontSize: 15,
+                  height: 1.4,
+                  color: AppColors.muted,
+                ),
               ),
             ],
           ),

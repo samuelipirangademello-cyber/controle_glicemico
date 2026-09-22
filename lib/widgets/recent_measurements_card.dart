@@ -5,37 +5,136 @@ import '../models/glycemia_record.dart';
 
 class RecentMeasurementsCard extends StatelessWidget {
   final List<GlycemiaRecord> records;
+
   const RecentMeasurementsCard({super.key, required this.records});
 
   @override
   Widget build(BuildContext context) {
     final recent = records.reversed.take(4).toList();
+
     return Container(
-      width: double.infinity, padding: const EdgeInsets.fromLTRB(18, 16, 18, 18),
-      decoration: BoxDecoration(color: AppColors.surface, border: Border.all(color: AppColors.line), borderRadius: BorderRadius.circular(22)),
-      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        const Row(children: [Icon(Icons.list_alt, color: AppColors.brand, size: 22), SizedBox(width: 10), Text('Últimas medições', style: TextStyle(fontSize: 17, fontWeight: FontWeight.w700, color: AppColors.brandDeep))]),
-        const SizedBox(height: 12),
-        SingleChildScrollView(scrollDirection: Axis.horizontal, child: DataTable(
-          columnSpacing: 18,
-          headingRowColor: WidgetStateProperty.all(AppColors.surfaceSoft),
-          columns: const [DataColumn(label: Text('Hora')), DataColumn(label: Text('Glicemia')), DataColumn(label: Text('Turno')), DataColumn(label: Text('Status'))],
-          rows: recent.map((r) => DataRow(cells: [
-            DataCell(Text(r.timeLabel)), DataCell(Text('${r.glycemia}', style: const TextStyle(fontWeight: FontWeight.w800, color: AppColors.brandDeep))), DataCell(Text(r.shift)), DataCell(Text(r.status, style: TextStyle(fontWeight: FontWeight.w700, color: _statusColor(r.status)))),
-          ])).toList(),
-        )),
-        const SizedBox(height: 14),
-        SizedBox(width: double.infinity, height: 48, child: TextButton(onPressed: () {}, style: TextButton.styleFrom(backgroundColor: AppColors.brandSoft, foregroundColor: AppColors.brandDeep, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14))), child: const Row(children: [Icon(Icons.list_alt, size: 20), Spacer(), Text('Ver histórico completo', style: TextStyle(fontSize: 15, fontWeight: FontWeight.w700)), Spacer(), Icon(Icons.chevron_right, size: 20)]))),
-      ]),
+      width: double.infinity,
+      padding: const EdgeInsets.fromLTRB(16, 15, 16, 10),
+      decoration: BoxDecoration(
+        color: AppColors.surface,
+        borderRadius: BorderRadius.circular(22),
+        border: Border.all(color: AppColors.line),
+      ),
+      child: Column(
+        children: [
+          Row(
+            children: [
+              const Text(
+                'Medições recentes',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w800,
+                  color: AppColors.ink,
+                ),
+              ),
+              const Spacer(),
+              const Text(
+                'Ver todas',
+                style: TextStyle(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w700,
+                  color: AppColors.brand,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 7),
+          ...recent.map((record) => _row(record)),
+        ],
+      ),
     );
   }
 
-  static Color _statusColor(String status) {
-    switch (GlycemiaRules.statusKey(status)) {
-      case 'low': return AppColors.lowFg;
-      case 'warn': return AppColors.warnFg;
-      case 'high': return AppColors.highFg;
-      default: return AppColors.okFg;
-    }
+  Widget _row(GlycemiaRecord record) {
+    final key = GlycemiaRules.statusKey(record.status);
+    final color = switch (key) {
+      'ok' => AppColors.okFg,
+      'warn' => AppColors.warnFg,
+      'high' => AppColors.highFg,
+      _ => AppColors.lowFg,
+    };
+
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 12),
+      decoration: const BoxDecoration(
+        border: Border(
+          bottom: BorderSide(color: AppColors.line),
+        ),
+      ),
+      child: Row(
+        children: [
+          Container(
+            width: 10,
+            height: 10,
+            decoration: BoxDecoration(
+              color: color,
+              shape: BoxShape.circle,
+            ),
+          ),
+          const SizedBox(width: 10),
+          Expanded(
+            flex: 5,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  '${record.glycemia} mg/dL',
+                  style: const TextStyle(
+                    fontSize: 15.5,
+                    fontWeight: FontWeight.w800,
+                    color: AppColors.ink,
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  '${record.dateLabel}, ${record.timeLabel}',
+                  style: const TextStyle(
+                    fontSize: 12,
+                    color: AppColors.muted,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Flexible(
+            flex: 4,
+            child: Align(
+              alignment: Alignment.centerRight,
+              child: Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 9,
+                  vertical: 6,
+                ),
+                decoration: BoxDecoration(
+                  color: color.withValues(alpha: .10),
+                  borderRadius: BorderRadius.circular(999),
+                ),
+                child: Text(
+                  record.status,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    fontSize: 10.5,
+                    fontWeight: FontWeight.w800,
+                    color: color,
+                  ),
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(width: 3),
+          const Icon(
+            Icons.chevron_right_rounded,
+            size: 21,
+            color: AppColors.muted,
+          ),
+        ],
+      ),
+    );
   }
 }
