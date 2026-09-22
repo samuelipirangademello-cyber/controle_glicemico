@@ -99,3 +99,16 @@ Mudanças desta build, só para testar essa hipótese:
 Nenhuma mudança de layout, texto ou dado foi feita. Se a tela abrir certa
 nesta build, o problema era o Impeller/sombra; se persistir, o problema é
 outro e o próximo passo é olhar o log de build do Codemagic.
+
+## Build 10 — Mostrar o erro real na tela
+
+A build 9 (sem boxShadow, sem elevation, sem Impeller) mudou a forma do bloco
+quebrado, mas não resolveu — o que aponta mais para uma exceção real no
+código Dart (escondida pela tela de erro padrão do modo release) do que para
+um bug de GPU/motor gráfico.
+
+Nesta build, `ErrorWidget.builder` foi substituído: em vez do bloco colorido
+sem texto, qualquer widget que falhar ao construir mostra a mensagem do erro
+em texto vermelho, com fundo branco. É só para diagnóstico; será removido
+depois que a causa for corrigida. Se a tela quebrar de novo, uma foto dela
+já traz a resposta.

@@ -1,9 +1,36 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'config/app_theme.dart';
 import 'repository/in_memory_glycemia_repository.dart';
 import 'screens/home_screen.dart';
 
-void main() => runApp(const GlycemiaApp());
+void main() {
+  // DIAGNÓSTICO (build 10): em vez do bloco colorido padrão do Flutter em
+  // modo release quando um widget falha ao construir/desenhar, mostra o
+  // texto real do erro na tela. Isso é só para investigação; será removido
+  // assim que a causa for identificada e corrigida.
+  ErrorWidget.builder = (FlutterErrorDetails details) {
+    return Container(
+      color: Colors.white,
+      padding: const EdgeInsets.all(16),
+      alignment: Alignment.topLeft,
+      child: SingleChildScrollView(
+        child: Text(
+          'ERRO DE INTERFACE (envie esta tela ao Claude):\n\n'
+          '${details.exceptionAsString()}\n\n'
+          '${details.stack}',
+          style: const TextStyle(color: Colors.red, fontSize: 11, fontFamily: 'monospace'),
+        ),
+      ),
+    );
+  };
+  // Captura também erros que aconteçam fora da construção de widgets
+  // (ex.: em callbacks assíncronos), para não sumirem silenciosamente.
+  FlutterError.onError = (FlutterErrorDetails details) {
+    FlutterError.presentError(details);
+  };
+  runApp(const GlycemiaApp());
+}
 
 class GlycemiaApp extends StatelessWidget {
   const GlycemiaApp({super.key});
