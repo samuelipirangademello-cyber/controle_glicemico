@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'config/app_theme.dart';
 import 'repository/in_memory_glycemia_repository.dart';
