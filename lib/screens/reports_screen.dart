@@ -45,7 +45,7 @@ class _ReportsScreenState extends State<ReportsScreen> {
       const SizedBox(height:14),
       SizedBox(height:52,child:ElevatedButton.icon(onPressed:data.isEmpty?null:()=>ReportService.printReport(start:start??data.first.dateTime,end:end??data.last.dateTime,records:data),icon:const Icon(Icons.picture_as_pdf_outlined),label:const Text('GERAR RELATÓRIO COMPLETO',style:TextStyle(fontWeight:FontWeight.w800)),style:ElevatedButton.styleFrom(backgroundColor:AppColors.brand,foregroundColor:Colors.white,shape:RoundedRectangleBorder(borderRadius:BorderRadius.circular(16))))),
       const SizedBox(height:8), Center(child:Text('${data.length} medição(ões) no período selecionado.',style:const TextStyle(color:AppColors.muted,fontSize:12))),
-    ];
+    ]);
   }));
   Widget _dateButton(String label,DateTime? value,Future<void> Function(bool) pick,bool isStart)=>OutlinedButton(onPressed:()=>pick(isStart),style:OutlinedButton.styleFrom(padding:const EdgeInsets.symmetric(horizontal:12,vertical:13),side:const BorderSide(color:AppColors.line),shape:RoundedRectangleBorder(borderRadius:BorderRadius.circular(14))),child:Column(crossAxisAlignment:CrossAxisAlignment.start,children:[Text(label,style:const TextStyle(fontSize:11,color:AppColors.muted)),const SizedBox(height:4),Text(value==null?'Selecionar':_fmt(value),style:const TextStyle(fontWeight:FontWeight.w800,color:AppColors.brandDeep))]));
   Widget _quickButton(String label,int days)=>OutlinedButton(onPressed:()=>_quick(days),child:Text(label));

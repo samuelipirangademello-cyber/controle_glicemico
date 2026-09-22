@@ -1,3 +1,4 @@
+import 'dart:typed_data';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
@@ -8,7 +9,7 @@ class ReportService {
     await Printing.layoutPdf(onLayout: (format) => _buildPdf(format, start, end, records));
   }
 
-  static Future<List<int>> _buildPdf(PdfPageFormat format, DateTime start, DateTime end, List<GlycemiaRecord> records) async {
+  static Future<Uint8List> _buildPdf(PdfPageFormat format, DateTime start, DateTime end, List<GlycemiaRecord> records) async {
     final pdf = pw.Document();
     final avg = records.isEmpty ? 0 : records.map((r) => r.glycemia).reduce((a,b)=>a+b) / records.length;
     final min = records.isEmpty ? 0 : records.map((r)=>r.glycemia).reduce((a,b)=>a<b?a:b);
@@ -25,7 +26,7 @@ class ReportService {
         _metric('Registros', '${records.length}'),
       ]),
       pw.SizedBox(height: 20),
-      if (records.isNotEmpty) pw.Table.fromTextArray(
+      if (records.isNotEmpty) pw.TableHelper.fromTextArray(
         headers: const ['Data', 'Hora', 'Glicemia', 'Turno', 'Status'],
         data: records.map((r) => [r.dateLabel, r.timeLabel, '${r.glycemia} mg/dL', r.shift, r.status]).toList(),
         headerStyle: pw.TextStyle(fontWeight: pw.FontWeight.bold),
