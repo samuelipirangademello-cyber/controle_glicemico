@@ -73,3 +73,29 @@ Foi incluída a plataforma Android (`android/`) e o `codemagic.yaml` para permit
 ## Etapa 2 — Compatibilidade Android/Flutter atual
 
 Atualizado o Kotlin Gradle Plugin para 2.2.20, conforme requisito do Flutter usado no CI.
+
+## Build 9 — Diagnóstico da tela quebrada (blocos sólidos rosa/cinza)
+
+No aparelho (Xiaomi/MIUI), a build 8 abriu com a aba Histórico mostrando dois
+blocos sólidos sem texto, embora o código dessa tela seja um Column simples
+(ícone + título + frase). Isso não é reproduzível lendo o código-fonte: nada em
+`main.dart` desenha dois retângulos coloridos. A hipótese testada nesta build:
+
+- O motor gráfico novo do Flutter no Android, o **Impeller**, tem vários
+  relatos abertos no repositório oficial do Flutter de cartões com sombra
+  (`boxShadow`) sendo desenhados como blocos sólidos ou corrompidos em certas
+  GPUs Android, incluindo relatos específicos em aparelhos Xiaomi.
+- Todos os cartões desta tela usavam `boxShadow` com blur, e o botão
+  "Registrar Glicemia" usava `elevation` (sombra do Material), a mesma família
+  de efeito.
+
+Mudanças desta build, só para testar essa hipótese:
+1. Removido o `boxShadow` de todos os cartões (mantida a borda fina).
+2. Zerada a `elevation`/`shadowColor` do botão principal.
+3. Desligado o Impeller no Android via `AndroidManifest.xml`
+   (`io.flutter.embedding.android.EnableImpeller = false`), voltando ao motor
+   Skia.
+
+Nenhuma mudança de layout, texto ou dado foi feita. Se a tela abrir certa
+nesta build, o problema era o Impeller/sombra; se persistir, o problema é
+outro e o próximo passo é olhar o log de build do Codemagic.

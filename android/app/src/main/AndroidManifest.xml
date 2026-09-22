@@ -23,5 +23,15 @@
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />
+        <!-- DIAGNÓSTICO (build 9): desliga o Impeller (motor gráfico novo do Flutter
+             no Android) e volta ao motor Skia. Há vários relatos abertos no
+             próprio repositório do Flutter de blocos sólidos/corrompidos no lugar
+             de cartões com sombra (boxShadow), específicos de certas GPUs Android
+             e de aparelhos Xiaomi. Se isto corrigir a tela, o problema era esse;
+             depois removemos esta linha quando o Flutter corrigir o bug, ou
+             mantemos assim, já que o app não depende de nenhum recurso do Impeller. -->
+        <meta-data
+            android:name="io.flutter.embedding.android.EnableImpeller"
+            android:value="false" />
     </application>
 </manifest>

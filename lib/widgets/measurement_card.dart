@@ -44,7 +44,6 @@ class MeasurementCard extends StatelessWidget {
       color: AppColors.surfaceTint,
       border: Border.all(color: AppColors.line),
       borderRadius: BorderRadius.circular(22),
-      boxShadow: const [BoxShadow(color: Color(0x0D5B1828), blurRadius: 16, offset: Offset(0, 6))],
     ),
     child: child,
   );

@@ -6,7 +6,7 @@ class ReportCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Container(
     width: double.infinity, padding: const EdgeInsets.fromLTRB(18, 16, 18, 18),
-    decoration: BoxDecoration(color: AppColors.surface, border: Border.all(color: AppColors.line), borderRadius: BorderRadius.circular(22), boxShadow: const [BoxShadow(color: Color(0x0D5B1828), blurRadius: 16, offset: Offset(0, 6))]),
+    decoration: BoxDecoration(color: AppColors.surface, border: Border.all(color: AppColors.line), borderRadius: BorderRadius.circular(22)),
     child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       const Row(children: [Icon(Icons.description_outlined, color: AppColors.brand, size: 22), SizedBox(width: 10), Text('Relatórios', style: TextStyle(fontSize: 17, fontWeight: FontWeight.w700, color: AppColors.brandDeep))]),
       const SizedBox(height: 8),

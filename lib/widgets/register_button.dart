@@ -13,8 +13,7 @@ class RegisterButton extends StatelessWidget {
       child: Material(
         color: AppColors.brand,
         borderRadius: BorderRadius.circular(16),
-        elevation: 4,
-        shadowColor: AppColors.brand.withValues(alpha: .26),
+        elevation: 0,
         child: InkWell(
           onTap: onPressed,
           borderRadius: BorderRadius.circular(16),
