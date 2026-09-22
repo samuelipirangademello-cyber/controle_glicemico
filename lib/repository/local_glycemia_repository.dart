@@ -42,6 +42,12 @@ class LocalGlycemiaRepository implements GlycemiaRepository {
   }
 
   @override
+  Future<void> replaceAll(List<GlycemiaRecord> records) async {
+    final prefs = await _prefs;
+    final sorted = List<GlycemiaRecord>.of(records)..sort((a, b) => a.dateTime.compareTo(b.dateTime));
+    await _save(prefs, sorted);
+  }
+
   Future<void> addRecord(GlycemiaRecord record) async {
     final prefs = await _prefs;
     final records = await getRecords();

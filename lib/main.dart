@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'config/app_theme.dart';
-import 'repository/glycemia_repository.dart';
 import 'repository/local_glycemia_repository.dart';
 import 'screens/home_screen.dart';
 import 'screens/history_screen.dart';
+import 'screens/reports_screen.dart';
+import 'screens/settings_screen.dart';
 
 void main() {
   runApp(const GlycemiaApp());
@@ -32,7 +33,7 @@ class AppShell extends StatefulWidget {
 
 class _AppShellState extends State<AppShell> {
   int index = 0;
-  final GlycemiaRepository repository = LocalGlycemiaRepository();
+  final LocalGlycemiaRepository repository = LocalGlycemiaRepository();
 
   void _goTo(int value) => setState(() => index = value);
 
@@ -41,16 +42,8 @@ class _AppShellState extends State<AppShell> {
     final screens = <Widget>[
       HomeScreen(repository: repository),
       HistoryScreen(repository: repository),
-      const _PlaceholderScreen(
-        title: 'Relatórios',
-        icon: Icons.insert_chart_outlined_rounded,
-        message: 'Os relatórios detalhados serão desenvolvidos nas próximas etapas.',
-      ),
-      const _PlaceholderScreen(
-        title: 'Configurações',
-        icon: Icons.settings_outlined,
-        message: 'As configurações serão desenvolvidas nas próximas etapas.',
-      ),
+      ReportsScreen(repository: repository),
+      SettingsScreen(repository: repository),
     ];
 
     return Scaffold(
@@ -166,58 +159,3 @@ class _BottomNavigationItem extends StatelessWidget {
   }
 }
 
-class _PlaceholderScreen extends StatelessWidget {
-  final String title;
-  final IconData icon;
-  final String message;
-
-  const _PlaceholderScreen({
-    required this.title,
-    required this.icon,
-    required this.message,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return SafeArea(
-      child: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(28),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                width: 68,
-                height: 68,
-                decoration: BoxDecoration(
-                  color: AppColors.brandSoft,
-                  borderRadius: BorderRadius.circular(22),
-                ),
-                child: Icon(icon, size: 31, color: AppColors.brandDeep),
-              ),
-              const SizedBox(height: 18),
-              Text(
-                title,
-                style: const TextStyle(
-                  fontSize: 22,
-                  fontWeight: FontWeight.w800,
-                  color: AppColors.brandDeep,
-                ),
-              ),
-              const SizedBox(height: 8),
-              Text(
-                message,
-                textAlign: TextAlign.center,
-                style: const TextStyle(
-                  fontSize: 15,
-                  height: 1.4,
-                  color: AppColors.muted,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}

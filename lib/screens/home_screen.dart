@@ -11,6 +11,8 @@ import '../widgets/recent_measurements_card.dart';
 import '../widgets/register_button.dart';
 import '../widgets/report_card.dart';
 import '../widgets/summary_card.dart';
+import '../services/google_sheets_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class HomeScreen extends StatefulWidget {
   final GlycemiaRepository repository;
@@ -171,6 +173,20 @@ class _RegisterFormSheetState extends State<_RegisterFormSheet> {
         glycemia: value,
       );
       await widget.repository.addRecord(record);
+      // Se o Google Sheets já estiver conectado, envia também a nova medição.
+      try {
+        final google = GoogleSheetsService.instance;
+        if (google.user != null) {
+          final prefs = await SharedPreferences.getInstance();
+          final sheetId = prefs.getString('google_spreadsheet_id') ?? '';
+          final range = prefs.getString('google_sheet_range') ?? 'A:E';
+          if (sheetId.isNotEmpty) {
+            await google.appendRecord(spreadsheetId: sheetId, range: range, record: record);
+          }
+        }
+      } catch (_) {
+        // O registro local permanece salvo mesmo se a internet estiver indisponível.
+      }
       if (mounted) Navigator.of(context).pop(true);
     } catch (_) {
       if (mounted) {
