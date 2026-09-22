@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'config/app_theme.dart';
-import 'repository/in_memory_glycemia_repository.dart';
+import 'repository/glycemia_repository.dart';
+import 'repository/local_glycemia_repository.dart';
 import 'screens/home_screen.dart';
+import 'screens/history_screen.dart';
 
 void main() {
   runApp(const GlycemiaApp());
@@ -30,21 +32,19 @@ class AppShell extends StatefulWidget {
 
 class _AppShellState extends State<AppShell> {
   int index = 0;
-  final repository = InMemoryGlycemiaRepository();
+  final GlycemiaRepository repository = LocalGlycemiaRepository();
+
+  void _goTo(int value) => setState(() => index = value);
 
   @override
   Widget build(BuildContext context) {
     final screens = <Widget>[
       HomeScreen(repository: repository),
-      const _PlaceholderScreen(
-        title: 'Histórico',
-        icon: Icons.receipt_long_outlined,
-        message: 'O histórico completo será desenvolvido na próxima etapa.',
-      ),
+      HistoryScreen(repository: repository),
       const _PlaceholderScreen(
         title: 'Relatórios',
         icon: Icons.insert_chart_outlined_rounded,
-        message: 'Os relatórios serão desenvolvidos nas próximas etapas.',
+        message: 'Os relatórios detalhados serão desenvolvidos nas próximas etapas.',
       ),
       const _PlaceholderScreen(
         title: 'Configurações',
@@ -57,17 +57,12 @@ class _AppShellState extends State<AppShell> {
       body: IndexedStack(index: index, children: screens),
       bottomNavigationBar: _BottomNavigation(
         currentIndex: index,
-        onSelected: (value) => setState(() => index = value),
+        onSelected: _goTo,
       ),
     );
   }
 }
 
-/// Navegação inferior deliberadamente simples:
-/// - altura fixa
-/// - sem Container vertical para o item selecionado
-/// - nenhum fundo que possa se esticar
-/// - somente ícone, texto e pequeno indicador inferior
 class _BottomNavigation extends StatelessWidget {
   final int currentIndex;
   final ValueChanged<int> onSelected;
@@ -80,11 +75,7 @@ class _BottomNavigation extends StatelessWidget {
   static const _items = [
     (Icons.home_outlined, Icons.home_rounded, 'Início'),
     (Icons.receipt_long_outlined, Icons.receipt_long_rounded, 'Histórico'),
-    (
-      Icons.insert_chart_outlined_rounded,
-      Icons.insert_chart_rounded,
-      'Relatórios',
-    ),
+    (Icons.insert_chart_outlined_rounded, Icons.insert_chart_rounded, 'Relatórios'),
     (Icons.settings_outlined, Icons.settings_rounded, 'Configurações'),
   ];
 
@@ -92,23 +83,16 @@ class _BottomNavigation extends StatelessWidget {
   Widget build(BuildContext context) {
     return Material(
       color: AppColors.surface,
-      elevation: 0,
       child: SafeArea(
         top: false,
         child: Container(
           height: 76,
           decoration: const BoxDecoration(
             color: AppColors.surface,
-            border: Border(
-              top: BorderSide(
-                color: AppColors.line,
-                width: 1,
-              ),
-            ),
+            border: Border(top: BorderSide(color: AppColors.line)),
           ),
           padding: const EdgeInsets.fromLTRB(8, 5, 8, 4),
           child: Row(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               for (var i = 0; i < _items.length; i++)
                 Expanded(
@@ -209,11 +193,7 @@ class _PlaceholderScreen extends StatelessWidget {
                   color: AppColors.brandSoft,
                   borderRadius: BorderRadius.circular(22),
                 ),
-                child: Icon(
-                  icon,
-                  size: 31,
-                  color: AppColors.brandDeep,
-                ),
+                child: Icon(icon, size: 31, color: AppColors.brandDeep),
               ),
               const SizedBox(height: 18),
               Text(
