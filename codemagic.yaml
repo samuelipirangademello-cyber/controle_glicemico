@@ -28,10 +28,19 @@ workflows:
 
       - name: Limpar recursos Android antigos incompatíveis
         script: |
-          # A interface usa @drawable/ic_launcher. Removemos ícones adaptive-icon
-          # antigos que possam ter permanecido no repositório de versões anteriores.
+          # Remove ícones adaptive-icon antigos que possam ter permanecido no repositório.
           find android/app/src/main/res -type f -path '*/mipmap-*/*' -name 'ic_launcher.xml' -delete
-          find android/app/src/main/res -type f -name '*.xml' -print0 | xargs -0 grep -l '<adaptive-icon' 2>/dev/null | xargs -r rm -f
+
+          # Compatível com o shell do ambiente Codemagic: remove qualquer XML
+          # que contenha <adaptive-icon, sem usar xargs -r.
+          find android/app/src/main/res -type f -name '*.xml' -exec sh -c '
+            for file do
+              if grep -q "<adaptive-icon" "$file"; then
+                echo "Removendo recurso incompatível: $file"
+                rm -f "$file"
+              fi
+            done
+          ' sh {} +
 
           if grep -R '<adaptive-icon' -n android/app/src/main/res 2>/dev/null; then
             echo 'Erro: ainda existe adaptive-icon nos recursos Android após a limpeza.'
