@@ -49,6 +49,17 @@ workflows:
 
           echo 'Recursos Android verificados: nenhum adaptive-icon incompatível encontrado.'
 
+      - name: Diagnóstico SHA-1 do Android
+        script: |
+          echo "===== SHA-1 DO DEBUG KEYSTORE CODEMAGIC ====="
+          if [ -f "$HOME/.android/debug.keystore" ]; then
+            keytool -list -v -keystore "$HOME/.android/debug.keystore" -alias androiddebugkey -storepass android -keypass android | grep -E "SHA1:|SHA-1:" || true
+          else
+            echo "debug.keystore não encontrado; procurando keystores disponíveis..."
+            find "$HOME/.android" -maxdepth 2 -type f -name '*.keystore' -o -name '*.jks' 2>/dev/null || true
+          fi
+          echo "=============================================="
+
       - name: Gerar APK Android
         script: |
           flutter build apk --debug
