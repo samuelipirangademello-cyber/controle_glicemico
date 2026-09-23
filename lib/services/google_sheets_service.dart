@@ -50,7 +50,8 @@ class GoogleSheetsService {
 
   Future<List<GlycemiaRecord>> readRecords({required String spreadsheetId, String range = 'A:E'}) async {
     if (spreadsheetId.trim().isEmpty) throw StateError('Informe o ID da planilha.');
-    final uri = Uri.https('sheets.googleapis.com', '/v4/spreadsheets/${Uri.encodeComponent(spreadsheetId.trim())}/values/${Uri.encodeComponent(range)}');
+    final encodedRange = Uri.encodeComponent(range.trim()).replaceAll('%3A', ':');
+    final uri = Uri.parse('https://sheets.googleapis.com/v4/spreadsheets/${Uri.encodeComponent(spreadsheetId.trim())}/values/$encodedRange');
     final response = await http.get(uri, headers: await _headers());
     if (response.statusCode < 200 || response.statusCode >= 300) {
       throw StateError('Google Sheets retornou ${response.statusCode}: ${response.body}');
@@ -75,10 +76,8 @@ class GoogleSheetsService {
   }
 
   Future<void> appendRecord({required String spreadsheetId, String range = 'A:E', required GlycemiaRecord record}) async {
-    final uri = Uri.https('sheets.googleapis.com', '/v4/spreadsheets/${Uri.encodeComponent(spreadsheetId.trim())}/values/${Uri.encodeComponent(range)}:append', {
-      'valueInputOption': 'USER_ENTERED',
-      'insertDataOption': 'INSERT_ROWS',
-    });
+    final encodedRange = Uri.encodeComponent(range.trim()).replaceAll('%3A', ':');
+    final uri = Uri.parse('https://sheets.googleapis.com/v4/spreadsheets/${Uri.encodeComponent(spreadsheetId.trim())}/values/$encodedRange:append?valueInputOption=USER_ENTERED&insertDataOption=INSERT_ROWS');
     final response = await http.post(uri, headers: {...await _headers(), 'Content-Type': 'application/json'}, body: jsonEncode({
       'values': [[record.dateLabel, record.timeLabel, record.glycemia, record.shift, record.status]],
     }));
